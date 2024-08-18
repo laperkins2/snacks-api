@@ -93,7 +93,7 @@ const SNACKS = [
   },
 ];
 
-// define Middleware functions
+// define Middleware functions defined before routes
 //use cors middleware
 app.use(cors());
 
