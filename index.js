@@ -1,10 +1,14 @@
 //import Dotenv
 require('dotenv').config();
+
 // import Express
 const express = require('express');
 
 //import cors
 const cors = require('cors');
+
+//import our Supabase instance
+const supabaseInstance = require('./supabaseInstance');
 
 //create an express application
 const app = express();
@@ -171,29 +175,29 @@ app.put('/snacks/:id', (req, res, next) => {
     const id = req.params.id;
     const updatedSnack = req.body;
 
-    if(
+    if (
       updatedSnack.name &&
       updatedSnack.description &&
       updatedSnack.price &&
       updatedSnack.category &&
       updatedSnack.inStock
     ) {
-      const snack = SNACKS.find((p) => p.id == id)
+      const snack = SNACKS.find((p) => p.id == id);
       if (snack) {
-        snack.id = id
+        snack.id = id;
         snack.name = updatedSnack.name;
         snack.description = updatedSnack.description;
         snack.price = updatedSnack.price;
         snack.category = updatedSnack.category;
         snack.inStock = updatedSnack.inStock;
-      
-      res.status(200).json(snack)
+
+        res.status(200).json(snack);
+      } else {
+        res.status(404).send('Snack not found');
+      }
     } else {
-      res.status(404).send('Snack not found');
+      res.status(400).json({ message: 'Data Invalid' });
     }
-  } else {
-    res.status(400).json({ message: 'Data Invalid' })
-  }
   } catch (error) {
     next(error);
   }
@@ -203,12 +207,12 @@ app.delete('/snacks/:id', (req, res, next) => {
   try {
     const snackId = parseInt(req.params.id);
     const snack = SNACKS.find((food) => food.id === snackId);
-    
+
     if (snack) {
-      const snack  = SNACKS.filter((food) => food.id !== snackId);
+      const snack = SNACKS.filter((food) => food.id !== snackId);
       res.status(200).json({ message: 'Snack deleted', deletedSnack: snack });
     } else {
-      res.status(404).json({ message: "Snack not found" });
+      res.status(404).json({ message: 'Snack not found' });
     }
   } catch (error) {
     next(error);
