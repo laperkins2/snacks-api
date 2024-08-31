@@ -7,8 +7,11 @@ const express = require('express');
 //import cors
 const cors = require('cors');
 
+//import Axios
+const axios = require('axios');
+
 //import our Supabase instance
-const supabaseInstance = require('./supabaseInstance');
+const supabase = require('./supaInstance');
 
 //create an express application
 const app = express();
@@ -113,9 +116,11 @@ app.get('/', (req, res, next) => {
 });
 
 //Route to Get all Snacks
-app.get('/snacks', (req, res, next) => {
+app.get('/snacks', async (req, res, next) => {
   try {
-    res.json(SNACKS);
+    // res.json(SNACKS);
+    const response = await supabase.get('/snacks');
+    res.json(response.data);
   } catch (error) {
     next(error);
   }
