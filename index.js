@@ -127,17 +127,17 @@ app.get('/snacks', async (req, res, next) => {
 });
 
 // Route to get a single snack
-app.get('/snacks/:id', (req, res, next) => {
+app.get('/snacks/:id', async (req, res, next) => {
   try {
-    const foundSnack = SNACKS.find((value) => {
-      return value.id === parseInt(req.params.id);
-    });
-
-    //error handling
-    if (!foundSnack) {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid snack id' });
+    }
+    const response = await supabase.get('/snacks?id=eq. ' + id);
+    if (response.data.length === 0) {
       return res.status(404).json({ message: 'Snack not found!' });
     }
-    res.json(foundSnack);
+    res.json(response.data[0]);
   } catch (error) {
     next(error);
   }
