@@ -129,12 +129,8 @@ app.get('/snacks', async (req, res, next) => {
 // Route to get a single snack
 app.get('/snacks/:id', async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
-      return res.status(400).json({ message: 'Invalid snack id' });
-    }
-    const response = await supabase.get('/snacks?id=eq. ' + id);
-    if (response.data.length === 0) {
+    const response = await supabase.get(`/snacks?id=eq.${req.params.id}`);
+    if (!response.data.length) {
       return res.status(404).json({ message: 'Snack not found!' });
     }
     res.json(response.data[0]);
@@ -144,7 +140,7 @@ app.get('/snacks/:id', async (req, res, next) => {
 });
 
 //Route to add a new snack(post)
-app.post('/snacks', (req, res, next) => {
+app.post('/snacks', async (req, res, next) => {
   try {
     const newSnack = req.body;
     if (
@@ -152,20 +148,10 @@ app.post('/snacks', (req, res, next) => {
       newSnack.description &&
       newSnack.price &&
       newSnack.category &&
-      newSnack.inStock
+      newSnack.instock
     ) {
-      const newId = SNACKS.length + 1;
-      const addSnack = {
-        id: newId,
-        name: newSnack.name,
-        description: newSnack.description,
-        price: newSnack.price,
-        category: newSnack.category,
-        inStock: newSnack.inStock,
-      };
-
-      SNACKS.push(addSnack);
-      res.status(201).json(addSnack);
+      const response = await supabase.post('/snacks', newSnack);
+      res.status(200).json(response.data);
     } else {
       res.status(400).json({ message: 'Invalid data' });
     }
@@ -175,31 +161,22 @@ app.post('/snacks', (req, res, next) => {
 });
 
 //Route to update existing snack(put)
-app.put('/snacks/:id', (req, res, next) => {
+app.put('/snacks/:id', async (req, res, next) => {
   try {
-    const id = req.params.id;
     const updatedSnack = req.body;
-
     if (
       updatedSnack.name &&
       updatedSnack.description &&
       updatedSnack.price &&
       updatedSnack.category &&
-      updatedSnack.inStock
+      updatedSnack.instock
     ) {
-      const snack = SNACKS.find((p) => p.id == id);
-      if (snack) {
-        snack.id = id;
-        snack.name = updatedSnack.name;
-        snack.description = updatedSnack.description;
-        snack.price = updatedSnack.price;
-        snack.category = updatedSnack.category;
-        snack.inStock = updatedSnack.inStock;
+      const response = await supabase.patch(
+        `/snacks?id=eq.${req.params.id}`,
+        updatedSnack
+      );
 
-        res.status(200).json(snack);
-      } else {
-        res.status(404).send('Snack not found');
-      }
+      res.status(200).json(response.data);
     } else {
       res.status(400).json({ message: 'Data Invalid' });
     }
@@ -207,18 +184,13 @@ app.put('/snacks/:id', (req, res, next) => {
     next(error);
   }
 });
-//Route to delete a snack(delete)
-app.delete('/snacks/:id', (req, res, next) => {
-  try {
-    const snackId = parseInt(req.params.id);
-    const snack = SNACKS.find((food) => food.id === snackId);
 
-    if (snack) {
-      const snack = SNACKS.filter((food) => food.id !== snackId);
-      res.status(200).json({ message: 'Snack deleted', deletedSnack: snack });
-    } else {
-      res.status(404).json({ message: 'Snack not found' });
-    }
+//Route to delete a snack(delete)
+app.delete('/snacks/:id', async (req, res, next) => {
+  try {
+    const response = await supabase.delete(`/snacks?id=eq.${req.params.id}`);
+
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
