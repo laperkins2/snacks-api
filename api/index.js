@@ -16,6 +16,7 @@ const supabase = require('../supaInstance');
 //import route functions
 const getAll = require('./routes/getAll');
 const getById = require('./routes/getById');
+const getAdd = require('./routes/getAdd');
 
 //create an express application
 const app = express();
@@ -48,25 +49,7 @@ app.get('/snacks', getAll);
 app.get('/snacks/:id', getById);
 
 //Route to add a new snack(post)
-app.post('/snacks', async (req, res, next) => {
-  try {
-    const newSnack = req.body;
-    if (
-      newSnack.name &&
-      newSnack.description &&
-      newSnack.price &&
-      newSnack.category &&
-      newSnack.instock
-    ) {
-      const response = await supabase.post('/snacks', newSnack);
-      res.status(200).json(response.data);
-    } else {
-      res.status(400).json({ message: 'Invalid data' });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+app.post('/snacks', getAdd);
 
 //Route to update existing snack(put)
 app.put('/snacks/:id', async (req, res, next) => {
