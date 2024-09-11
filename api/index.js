@@ -15,6 +15,7 @@ const supabase = require('../supaInstance');
 
 //import route functions
 const getAll = require('./routes/getAll');
+const getById = require('./routes/getById');
 
 //create an express application
 const app = express();
@@ -44,17 +45,7 @@ app.get('/', (req, res, next) => {
 app.get('/snacks', getAll);
 
 // Route to get a single snack
-app.get('/snacks/:id', async (req, res, next) => {
-  try {
-    const response = await supabase.get(`/snacks?id=eq.${req.params.id}`);
-    if (!response.data.length) {
-      return res.status(404).json({ message: 'Snack not found!' });
-    }
-    res.json(response.data[0]);
-  } catch (error) {
-    next(error);
-  }
-});
+app.get('/snacks/:id', getById);
 
 //Route to add a new snack(post)
 app.post('/snacks', async (req, res, next) => {
