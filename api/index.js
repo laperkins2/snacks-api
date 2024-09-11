@@ -17,6 +17,8 @@ const supabase = require('../supaInstance');
 const getAll = require('./routes/getAll');
 const getById = require('./routes/getById');
 const getAdd = require('./routes/getAdd');
+const getUpdate = require('./routes/getUpdate');
+const getDelete = require('./routes/getDelete');
 
 //create an express application
 const app = express();
@@ -52,40 +54,10 @@ app.get('/snacks/:id', getById);
 app.post('/snacks', getAdd);
 
 //Route to update existing snack(put)
-app.put('/snacks/:id', async (req, res, next) => {
-  try {
-    const updatedSnack = req.body;
-    if (
-      updatedSnack.name &&
-      updatedSnack.description &&
-      updatedSnack.price &&
-      updatedSnack.category &&
-      updatedSnack.instock
-    ) {
-      const response = await supabase.patch(
-        `/snacks?id=eq.${req.params.id}`,
-        updatedSnack
-      );
-
-      res.status(200).json(response.data);
-    } else {
-      res.status(400).json({ message: 'Data Invalid' });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+app.put('/snacks/:id', getUpdate);
 
 //Route to delete a snack(delete)
-app.delete('/snacks/:id', async (req, res, next) => {
-  try {
-    const response = await supabase.delete(`/snacks?id=eq.${req.params.id}`);
-
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-});
+app.delete('/snacks/:id', getDelete);
 
 //error handling
 //generic error handling middleware
