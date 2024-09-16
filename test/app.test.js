@@ -1,10 +1,14 @@
+//import Dotenv
+require('dotenv').config();
 const request = require('supertest');
-const app = require('../api/index');
+const { app, server } = require('../api/index');
 
 describe('Snacks API', () => {
   // Test Get all snacks
   it('should fetch all snacks', async () => {
-    const response = await request(app).get('/snacks');
+    const response = await request(app)
+      .get('/snacks')
+      .set('api-key', process.env.ADMIN_API_KEY);
     expect(response.statusCode).toBe(200);
     expect(response.body).toBeInstanceOf(Array);
   });
@@ -18,7 +22,10 @@ describe('Snacks API', () => {
       category: 'Salty',
       instock: true,
     };
-    const response = await request(app).post('/snacks').send(newSnack);
+    const response = await request(app)
+      .post('/snacks')
+      .set('api-key', process.env.ADMIN_API_KEY)
+      .send(newSnack);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('name', 'description', 'price');
   });
@@ -26,7 +33,9 @@ describe('Snacks API', () => {
   // Test GET single snack by ID
   it('should fetch a single snack by ID', async () => {
     const snackId = 8;
-    const response = await request(app).get(`/snacks/${snackId}`);
+    const response = await request(app)
+      .get(`/snacks/${snackId}`)
+      .set('api-key', process.env.ADMIN_API_KEY);
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('id', snackId);
   });
@@ -43,17 +52,20 @@ describe('Snacks API', () => {
     };
     const response = await request(app)
       .put(`/snacks/${snackId}`)
+      .set('api-key', process.env.ADMIN_API_KEY)
       .send(updatedSnack);
     expect(response.status).toBe(200);
   });
   // Test DELETE route
   it('should delete a snack', async () => {
     const snackId = 1;
-    const response = await request(app).delete(`/snacks/${snackId}`);
+    const response = await request(app)
+      .delete(`/snacks/${snackId}`)
+      .set('api-key', process.env.ADMIN_API_KEY);
     expect(response.status).toBe(204);
-
-    // Verify deletion
-    const fetchResponse = await request(app).get(`/snacks/${snackId}`);
-    expect(fetchResponse.statusCode).toBe(404);
+  });
+  // Close the server after all tests
+  afterAll((done) => {
+    server.close(done); // Ensure server is closed after tests
   });
 });

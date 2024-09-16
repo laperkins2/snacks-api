@@ -29,7 +29,7 @@ const PORT = 4000;
 // define Middleware functions defined before routes
 //use cors middleware
 const corsOptions = {
-  origin: 'http://localhost:4000',
+  origin: 'https://example.com',
   optionsSuccessStatus: 200,
 };
 
@@ -38,10 +38,21 @@ app.use(cors(corsOptions));
 //use JSON middleware to parse request bodies
 app.use(express.json());
 
+//middleware for api key security
+
+app.use((req, res, next) => {
+  const apiKey = req.headers['api-key'];
+
+  if (apiKey !== process.env.ADMIN_API_KEY) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  next();
+});
+
 //define our routes
 //Home Route
 app.get('/', (req, res, next) => {
-  res.json({ hello: 'World!' });
+  res.json(docs);
 });
 
 //Route to Get all Snacks
@@ -78,8 +89,8 @@ app.use((req, res, next) => {
 });
 
 //make the server listen on our port
-// app.listen(PORT, () => {
-//   console.log(`The server is running on http://localhost:${PORT}`);
-// });
+const server = app.listen(PORT, () => {
+  console.log(`The server is running on http://localhost:${PORT}`);
+});
 
-module.exports = app;
+module.exports = { app, server };
