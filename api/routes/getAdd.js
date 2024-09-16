@@ -2,19 +2,22 @@ const supabase = require('../../supaInstance');
 
 const getAdd = async (req, res, next) => {
   try {
-    const newSnack = req.body;
-    if (
-      newSnack.name &&
-      newSnack.description &&
-      newSnack.price &&
-      newSnack.category &&
-      newSnack.instock
-    ) {
-      const response = await supabase.post('/snacks', newSnack);
-      res.status(200).json(response.data);
-    } else {
-      res.status(400).json({ message: 'Invalid data' });
+    const { name, description, price, category, instock } = req.body;
+    if (!name || !description || !price || !category || !instock) {
+      return res
+        .status(400)
+        .json({ message: 'Please provide all required fields' });
     }
+    const newSnack = {
+      name,
+      description,
+      price,
+      category,
+      instock,
+    };
+    const response = await supabase.post('/snacks', newSnack);
+
+    res.status(201).json(newSnack);
   } catch (error) {
     next(error);
   }
