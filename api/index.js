@@ -29,7 +29,7 @@ const PORT = 4000;
 // define Middleware functions defined before routes
 //use cors middleware
 const corsOptions = {
-  origin: 'https://example.com',
+  origin: process.env.SNACKS_CLIENT,
   optionsSuccessStatus: 200,
 };
 
