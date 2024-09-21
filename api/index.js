@@ -31,7 +31,7 @@ const PORT = 4000;
 //use cors middleware
 const corsOptions = {
   origin: process.env.SNACKS_CLIENT,
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -94,4 +94,4 @@ const server = app.listen(PORT, () => {
   console.log(`The server is running on http://localhost:${PORT}`);
 });
 
-module.exports = { app, server };
+module.exports = app;

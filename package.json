@@ -16,10 +16,10 @@
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "express": "^4.21.0",
     "nodemon": "^3.1.4"
   },
   "devDependencies": {
-    "express": "^4.21.0",
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
   }
