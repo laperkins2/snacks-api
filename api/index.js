@@ -19,6 +19,7 @@ const getById = require('./routes/getById');
 const getAdd = require('./routes/getAdd');
 const getUpdate = require('./routes/getUpdate');
 const getDelete = require('./routes/getDelete');
+const docs = require('./routes/docs');
 
 //create an express application
 const app = express();
